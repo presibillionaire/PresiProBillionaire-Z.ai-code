@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TradeSession {
+  id                    String   @id @default(cuid())
+  userId                String?
+  sessionKey            String
+  market                String
+  direction             String   @default("EVEN")
+  stake                 Float    @default(10.0)
+  tickDuration          Int      @default(2)
+  compositeScoreAtEntry Float?
+  isSplitResult         Boolean  @default(false)
+  netProfit             Float    @default(0.0)
+  isSimulation         Boolean  @default(true)
+  strategy              String   @default("m-pro")
+  mode                  String   @default("standard")
+  result                String   @default("pending")
+  contractId            Int?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
