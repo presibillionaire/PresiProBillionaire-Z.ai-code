@@ -30,3 +30,21 @@ Stage Summary:
 - Page transition with blur + scale effect on route change
 - Hover animations with scale/shadow on cards (AnimatedCard)
 - All changes verified: HTML output confirms teal classes and inline animation styles
+
+---
+Task ID: 2
+Agent: Main Agent
+Task: Fix "sandbox is inactive" error
+
+Work Log:
+- Diagnosed: Dev server process was dying intermittently due to backgrounding with `tee` pipe in dev script
+- Identified root cause: `strategy-selector.tsx` was missing `import { useState, useEffect } from "react"` - caused runtime crash when transitioning to dashboard
+- Fixed: Added missing React imports to `src/components/dashboard/strategy-selector.tsx`
+- Verified: Server restarted properly, dashboard renders with all components (strategy selector, strategy panel, AI strategist, digit chart, market scanner, trade history)
+- Confirmed: No console errors, teal green color scheme working, all animations functional
+- Used VLM to verify dashboard screenshot - all sections visible and functional
+
+Stage Summary:
+- Root cause: Missing React hook imports in strategy-selector.tsx caused "sandbox is inactive" (client-side exception) error
+- Fix: Added `import { useState, useEffect } from "react"` 
+- Server now stable and serving both landing page and dashboard correctly

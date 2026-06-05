@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import {
   Crown, Hash, Crosshair, Scan, Sparkles,
   BarChart2, ArrowUpDown, ChevronsUpDown, Shield,
