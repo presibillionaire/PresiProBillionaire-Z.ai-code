@@ -133,3 +133,35 @@ Stage Summary:
 - All features verified working: React + Vite migration, CircuitBoard logo, strategy redesign, How to Use modals
 - Zero lint errors, zero console errors
 - Full end-to-end flow: landing page → demo mode → dashboard → strategy cards → how-to-use modal
+
+---
+Task ID: 6
+Agent: Main Agent
+Task: Major redesign - Live Deriv WebSocket, serverless architecture, modern UI
+
+Work Log:
+- Created src/hooks/use-deriv-ws.ts: Custom React hook for Deriv WebSocket connection (wss://ws.binaryws.com/websockets/v3?app_id=119390), handles authorize, tick subscriptions, tick processing (even/odd strength, gap, stability, quality, confidence, direction), reconnection on disconnect
+- Created src/hooks/use-deriv-trade.ts: Trade execution hook that sends buy contracts via Deriv WebSocket (DIGITEVEN, DIGITODD, DIGITOVER, DIGITUNDER, CALL, PUT), with strategy-specific contract type mapping, mode reversal, barrier support for Over/Under
+- Rewrote src/lib/markets.ts: All 9 strategies updated with professional descriptions, 8-step how-to-use guides, 5 pro tips each, detailed recommended markets text. Added Trade and MarketData interfaces, DERIV constants
+- Rewrote src/stores/trading-store.ts: Added wsConnected, authorizeResponse, lastTickTime, activeTickSubscriptions, _wsRef fields and setter actions. authenticate() now pulls default strategy from STRATEGIES import
+- Rewrote src/components/landing/auth-section.tsx: Removed /api/validate-token fetch, demo token still works, real tokens store for WS auth. Added glassmorphism card design, connection status indicator, Loader2 spinner, error messages
+- Rewrote src/components/landing/hero.tsx: New headline "AI-Powered Trading Signals", animated gradient mesh background (3 floating gradient orbs), live stats row (10 Markets, 7 Strategies, Zero Latency), OAuth + demo buttons
+- Rewrote src/components/landing/feature-cards.tsx: 3 updated features (Live Market Scanning, Multi-Strategy Engine, Zero Latency), gradient accent lines, glassmorphism cards
+- Rewrote src/components/dashboard/strategy-selector.tsx: Card grid (2/3/4 cols responsive), glassmorphism cards with gradient borders, active indicator (teal dot + ring), hover glow/scale, WS connection status, updated How To Use modal with CheckCircle2 steps
+- Rewrote src/components/dashboard/market-scanner.tsx: Real tick counts, live connection indicator (Wifi/WifiOff), ticks counter, quality rankings, animated progress bars, empty state with Radio icon
+- Rewrote src/components/dashboard/digit-chart.tsx: Real digit distribution from live ticks, count labels, starred top digit, last tick display, highlighted current digit
+- Rewrote src/components/dashboard/strategy-panel.tsx: Market selector buttons, real confidence from live data, live indicator, last digit display, win rate stat card, trend/guard stats, glassmorphism design
+- Rewrote src/components/dashboard/execute-button.tsx: Removed /api/execute-trade fetch, executes via WebSocket, demo simulation fallback, animated shine overlay, disabled state with connection message
+- Rewrote src/components/dashboard/header.tsx: Real balance display, WS connection status (Wifi/WifiOff), session P/L with trend icon, account type badge, glassmorphism background
+- Rewrote src/components/dashboard/ai-strategist.tsx: Updated description to mention DeepSeek AI, BrainCircuit icon, animated toggle
+- Rewrote src/components/dashboard/trade-history.tsx: Win/Loss filter tabs with Trophy/XCircle icons, trade counts, contract ID display, dates, P/L tracking
+- Rewrote src/App.tsx: Global WebSocket connection manager (connectWs, disconnectWs, processTick), connects on auth, disconnects on logout, reconnection logic, AnimatePresence transitions
+- Updated src/App.css: Added gradient-shift, tick-flash keyframes and utility classes, noise texture overlay on body::before
+
+Stage Summary:
+- Completely serverless architecture: All WebSocket connections direct from browser to Deriv, no API server dependency
+- Real live data: Tick streaming from 10 Deriv synthetic indices processed client-side
+- Zero lint errors, zero build errors, clean production build (524KB JS, 150KB CSS)
+- All 7 active strategies have detailed 8-step guides with 5 pro tips each
+- Modern glassmorphism design throughout with animated gradient backgrounds
+- Connection status visible in header, scanner, strategy selector, and execute button

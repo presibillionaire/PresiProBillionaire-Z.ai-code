@@ -1,91 +1,134 @@
-
 import { useState } from "react";
-import { History } from "lucide-react";
+import { History, Trophy, XCircle, Clock } from "lucide-react";
 import { useTradingStore } from "@/stores/trading-store";
 import { SlideUp, AnimatedPopup } from "@/components/shared/animations";
+import { motion } from "framer-motion";
 
-type Filter = "all" | "open" | "closed";
+type Filter = "all" | "win" | "loss";
 
 export function TradeHistory() {
-  const { trades } = useTradingStore();
+  const { trades, sessionPL } = useTradingStore();
   const [filter, setFilter] = useState<Filter>("all");
 
   const filteredTrades = trades.filter((t) => {
-    if (filter === "open") return t.result === "open" || t.result === "pending";
-    if (filter === "closed") return t.result === "win" || t.result === "loss";
+    if (filter === "win") return t.result === "win";
+    if (filter === "loss") return t.result === "loss";
     return true;
   });
+
+  const winCount = trades.filter((t) => t.result === "win").length;
+  const lossCount = trades.filter((t) => t.result === "loss").length;
 
   return (
     <SlideUp delay={0.35}>
       <div className="w-full max-w-4xl mx-auto px-4 mt-4 mb-8">
-        <div className="rounded-2xl border border-white/[0.06] bg-gray-900/60 backdrop-blur-xl shadow-2xl shadow-black/40 p-4 sm:p-5">
+        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-xl shadow-2xl shadow-black/40 p-4 sm:p-5 relative overflow-hidden">
+          {/* Top accent line */}
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-teal-400/20 to-transparent" />
+
           {/* Header */}
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <History size={14} className="text-teal-400" />
-              <span className="text-[9px] font-medium uppercase tracking-wider text-gray-500">
-                Trade History
-              </span>
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 bg-teal-500/10 border border-teal-400/20 rounded-lg flex items-center justify-center">
+                <History size={14} className="text-teal-400" />
+              </div>
+              <div>
+                <span className="text-[11px] font-medium uppercase tracking-wider text-gray-400">
+                  Trade History
+                </span>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <span className="text-[10px] text-gray-600 tabular-nums">{trades.length} trades</span>
+                  {sessionPL !== 0 && (
+                    <>
+                      <span className="text-gray-700">·</span>
+                      <span className={`text-[10px] tabular-nums font-medium ${sessionPL >= 0 ? "text-teal-400" : "text-red-400"}`}>
+                        P/L: {sessionPL >= 0 ? "+" : ""}{sessionPL.toFixed(2)}
+                      </span>
+                    </>
+                  )}
+                </div>
+              </div>
             </div>
 
             {/* Filter Tabs */}
-            <div className="flex items-center bg-white/[0.03] border border-gray-800 rounded-lg p-0.5">
-              {(["all", "open", "closed"] as Filter[]).map((f) => (
-                <button
-                  key={f}
-                  onClick={() => setFilter(f)}
-                  className={`px-2.5 py-1 rounded-md text-[10px] font-medium transition-all capitalize cursor-pointer ${
-                    filter === f
-                      ? "bg-teal-500/20 text-teal-300 border border-teal-400/20"
-                      : "text-gray-500 hover:text-gray-400"
+            <div className="flex items-center bg-white/[0.03] border border-white/[0.06] rounded-xl p-1 gap-0.5">
+              {([
+                { key: "all" as Filter, label: "All", count: trades.length, icon: null },
+                { key: "win" as Filter, label: "Win", count: winCount, icon: <Trophy size={10} /> },
+                { key: "loss" as Filter, label: "Loss", count: lossCount, icon: <XCircle size={10} /> },
+              ]).map((f) => (
+                <motion.button
+                  key={f.key}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setFilter(f.key)}
+                  className={`px-3 py-1.5 rounded-lg text-[10px] font-medium transition-all flex items-center gap-1 cursor-pointer ${
+                    filter === f.key
+                      ? "bg-teal-500/20 text-teal-300 border border-teal-400/20 shadow-sm"
+                      : "text-gray-500 hover:text-gray-400 border border-transparent"
                   }`}
                 >
-                  {f}
-                </button>
+                  {f.icon}
+                  {f.label}
+                  <span className="text-gray-600">({f.count})</span>
+                </motion.button>
               ))}
             </div>
           </div>
 
           {/* Trades List */}
-          <div className="max-h-64 overflow-y-auto custom-scrollbar space-y-1.5">
+          <div className="max-h-72 overflow-y-auto custom-scrollbar space-y-2">
             {filteredTrades.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-gray-600 text-sm">No trades yet. Place a trade to get started.</p>
+              <div className="text-center py-10">
+                <Clock size={24} className="text-gray-700 mx-auto mb-2" />
+                <p className="text-gray-600 text-sm">No trades yet. Execute a signal to get started.</p>
+                <p className="text-gray-700 text-xs mt-1">Trades will appear here with real timestamps and P/L data.</p>
               </div>
             ) : (
               filteredTrades.map((trade, i) => (
-                <AnimatedPopup key={trade.id} delay={i * 0.05}>
-                  <div className="flex items-center justify-between p-3 rounded-lg bg-gray-800/30 border border-white/[0.03] hover:bg-gray-800/50 hover:border-teal-500/10 transition-all">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-2 h-2 rounded-full ${
-                        trade.result === "win" ? "bg-teal-400"
-                        : trade.result === "loss" ? "bg-red-400"
-                        : "bg-amber-400 animate-pulse"
-                      }`} />
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-white text-xs font-medium">{trade.direction}</span>
-                          <span className="text-gray-500 text-[10px]">·</span>
-                          <span className="text-gray-400 text-[10px]">{trade.marketLabel}</span>
-                        </div>
-                        <span className="text-gray-600 text-[9px] tabular-nums">
+                <motion.div
+                  key={trade.id}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.2, delay: i * 0.03 }}
+                  className="flex items-center justify-between p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:bg-white/[0.04] hover:border-teal-500/10 transition-all"
+                >
+                  <div className="flex items-center gap-3">
+                    {/* Status indicator */}
+                    <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${
+                      trade.result === "win" ? "bg-emerald-400 shadow-sm shadow-emerald-400/30"
+                      : trade.result === "loss" ? "bg-red-400 shadow-sm shadow-red-400/30"
+                      : trade.result === "open" ? "bg-amber-400 animate-pulse" : "bg-gray-600"
+                    }`} />
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-white text-xs font-semibold">{trade.direction}</span>
+                        <span className="text-gray-600 text-[10px]">·</span>
+                        <span className="text-gray-400 text-[11px]">{trade.marketLabel}</span>
+                        {trade.contractId && (
+                          <span className="text-gray-700 text-[9px] font-mono">#{trade.contractId}</span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-gray-600 text-[10px] tabular-nums">
                           {new Date(trade.timestamp).toLocaleTimeString()}
+                        </span>
+                        <span className="text-gray-700 text-[9px]">
+                          {new Date(trade.timestamp).toLocaleDateString()}
                         </span>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <span className={`text-xs font-semibold tabular-nums ${
-                        trade.profit >= 0 ? "text-teal-400" : "text-red-400"
-                      }`}>
-                        {trade.profit >= 0 ? "+" : ""}{trade.profit.toFixed(2)}
-                      </span>
-                      <div className="text-gray-600 text-[9px] tabular-nums">
-                        {trade.stake.toFixed(2)} stake
-                      </div>
+                  </div>
+                  <div className="text-right">
+                    <span className={`text-sm font-bold tabular-nums ${
+                      trade.profit >= 0 ? "text-emerald-400" : "text-red-400"
+                    }`}>
+                      {trade.profit >= 0 ? "+" : ""}{trade.profit.toFixed(2)}
+                    </span>
+                    <div className="text-gray-600 text-[9px] tabular-nums mt-0.5">
+                      {trade.stake.toFixed(2)} stake
                     </div>
                   </div>
-                </AnimatedPopup>
+                </motion.div>
               ))
             )}
           </div>

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import type { Trade, MarketData, Strategy } from "@/lib/markets";
-import { MARKETS } from "@/lib/markets";
+import { MARKETS, STRATEGIES } from "@/lib/markets";
 
 export type Direction = "EVEN" | "ODD" | "MIX" | "AUTO";
 export type Mode = "standard" | "reverse";
@@ -47,6 +47,13 @@ interface TradingState {
   statusMessage: string;
   scanStatus: "idle" | "scanning" | "ready" | "trading";
 
+  // WebSocket state
+  wsConnected: boolean;
+  authorizeResponse: Record<string, unknown> | null;
+  lastTickTime: number;
+  activeTickSubscriptions: string[];
+  _wsRef: WebSocket | null;
+
   // Actions
   setToken: (token: string) => void;
   setAuthStatus: (status: AuthStatus) => void;
@@ -84,6 +91,13 @@ interface TradingState {
   toggleAI: () => void;
   setStatusMessage: (msg: string) => void;
   setScanStatus: (status: "idle" | "scanning" | "ready" | "trading") => void;
+
+  // WebSocket actions
+  setWsConnected: (connected: boolean) => void;
+  setAuthorizeResponse: (data: Record<string, unknown> | null) => void;
+  setLastTickTime: (time: number) => void;
+  setActiveTickSubscriptions: (subs: string[]) => void;
+  setWsRef: (ws: WebSocket | null) => void;
 }
 
 const initialMarketData: Record<string, MarketData> = {};
@@ -144,46 +158,30 @@ export const useTradingStore = create<TradingState>((set, get) => ({
   statusMessage: "",
   scanStatus: "idle",
 
+  // WebSocket state
+  wsConnected: false,
+  authorizeResponse: null,
+  lastTickTime: 0,
+  activeTickSubscriptions: [],
+  _wsRef: null,
+
   // Actions
   setToken: (token) => set({ token }),
   setAuthStatus: (status) => set({ authStatus: status }),
   setBalance: (balance) => set({ balance }),
   setAccountType: (type) => set({ accountType: type }),
 
-  authenticate: (token, balance, type) =>
+  authenticate: (token, balance, type) => {
+    const defaultStrategy = STRATEGIES.find((s) => s.id === "m-pro") || STRATEGIES[0];
     set({
       token,
       balance,
       accountType: type,
       authStatus: "authenticated",
-      activeStrategy: {
-        id: "m-pro",
-        name: "M Pro",
-        description: "Even/Odd confidence engine across 10 markets",
-        icon: "crown",
-        status: "active",
-        winRate: 78,
-        difficulty: "beginner",
-        bestMarkets: ["1HZ10V", "1HZ25V", "1HZ75V", "R_10", "R_25"],
-        howToUse: {
-          steps: [
-            "Select M Pro strategy from the strategy panel",
-            "Wait for the scanner to collect at least 20 ticks across markets",
-            "Check the confidence gauge — look for 70%+ confidence",
-            "Choose EVEN or ODD based on the signal direction",
-            "Set your stake amount (recommended $1–$5 for beginners)",
-            "Click Execute when confidence is high and cooldown is ready",
-          ],
-          tips: [
-            "Best on 1-second Volatility indices",
-            "Wait for 3+ confirm cycles before trading",
-            "Use Standard mode for trending markets",
-          ],
-          recommended: "Start with Vol 10 (1s) or Vol 25 (1s) for highest consistency",
-        },
-      },
+      activeStrategy: defaultStrategy,
       scanStatus: "scanning",
-    }),
+    });
+  },
 
   logout: () =>
     set({
@@ -198,6 +196,11 @@ export const useTradingStore = create<TradingState>((set, get) => ({
       scanStatus: "idle",
       statusMessage: "",
       marketData: initialMarketData,
+      wsConnected: false,
+      authorizeResponse: null,
+      lastTickTime: 0,
+      activeTickSubscriptions: [],
+      _wsRef: null,
     }),
 
   setActiveStrategy: (strategy) => set({ activeStrategy: strategy, strategySelectorOpen: false }),
@@ -239,4 +242,11 @@ export const useTradingStore = create<TradingState>((set, get) => ({
   toggleAI: () => set((s) => ({ aiEnabled: !s.aiEnabled })),
   setStatusMessage: (msg) => set({ statusMessage: msg }),
   setScanStatus: (status) => set({ scanStatus: status }),
+
+  // WebSocket actions
+  setWsConnected: (connected) => set({ wsConnected: connected }),
+  setAuthorizeResponse: (data) => set({ authorizeResponse: data }),
+  setLastTickTime: (time) => set({ lastTickTime: time }),
+  setActiveTickSubscriptions: (subs) => set({ activeTickSubscriptions: subs }),
+  setWsRef: (ws) => set({ _wsRef: ws }),
 }));
