@@ -18,7 +18,7 @@ export function Logo({ size = "md" }: LogoProps) {
   return (
     <div className="flex items-center gap-2">
       <div
-        className={`${s.container} bg-gradient-to-br from-sky-400 to-cyan-500 rounded-lg flex items-center justify-center`}
+        className={`${s.container} bg-gradient-to-br from-teal-400 to-emerald-500 rounded-lg flex items-center justify-center`}
       >
         <Zap className={`text-white`} size={s.icon} strokeWidth={2.5} />
       </div>

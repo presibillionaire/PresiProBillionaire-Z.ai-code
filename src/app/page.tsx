@@ -17,53 +17,31 @@ import { DigitChart } from "@/components/dashboard/digit-chart";
 import { MarketScanner } from "@/components/dashboard/market-scanner";
 import { ExecuteButton } from "@/components/dashboard/execute-button";
 import { TradeHistory } from "@/components/dashboard/trade-history";
+import { PageTransition } from "@/components/shared/animations";
 
 export default function Home() {
   const {
-    authStatus,
-    scanStatus,
-    scanProgress,
-    marketData,
-    selectedMarket,
-    updateMarketData,
-    setScanProgress,
-    setScanStatus,
-    setStatusMessage,
-    setBalance,
-    setSelectedMarket,
-    token,
+    authStatus, scanStatus, scanProgress, marketData, selectedMarket,
+    updateMarketData, setScanProgress, setScanStatus, setStatusMessage,
+    setBalance, setSelectedMarket, token,
   } = useTradingStore();
 
   const wsRef = useRef<WebSocket | null>(null);
   const tickIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const scanIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Simulated tick collection and scanning
   const simulateTicks = useCallback(() => {
     const allData = { ...marketData };
-
     MARKETS.forEach((m) => {
       const current = allData[m.symbol] || {
-        symbol: m.symbol,
-        label: m.label,
-        ticksCollected: 0,
-        evenStrength: 0,
-        oddStrength: 0,
-        gap: 0,
-        stability: 0,
-        quality: 0,
-        lastDigits: [],
-        confidence: 0,
-        direction: "NEUTRAL" as const,
+        symbol: m.symbol, label: m.label, ticksCollected: 0,
+        evenStrength: 0, oddStrength: 0, gap: 0, stability: 0,
+        quality: 0, lastDigits: [], confidence: 0, direction: "NEUTRAL" as const,
       };
-
-      // Only collect ticks for some markets to simulate real behavior
       if (current.ticksCollected < 20 && Math.random() > 0.3) {
         current.ticksCollected += 1;
         current.lastDigits.push(Math.floor(Math.random() * 10));
       }
-
-      // Calculate strengths when we have data
       if (current.lastDigits.length > 0) {
         const evenCount = current.lastDigits.filter((d: number) => d % 2 === 0).length;
         const oddCount = current.lastDigits.length - evenCount;
@@ -72,21 +50,16 @@ export default function Home() {
         current.gap = Math.abs(current.evenStrength - current.oddStrength);
         current.stability = Math.max(0, 100 - current.gap * 3);
         current.quality = current.gap * current.stability / 100;
-
         if (current.evenStrength > current.oddStrength) {
-          current.direction = "EVEN";
-          current.confidence = current.evenStrength;
+          current.direction = "EVEN"; current.confidence = current.evenStrength;
         } else if (current.oddStrength > current.evenStrength) {
-          current.direction = "ODD";
-          current.confidence = current.oddStrength;
+          current.direction = "ODD"; current.confidence = current.oddStrength;
         }
       }
-
       updateMarketData(m.symbol, current);
     });
   }, [marketData, updateMarketData]);
 
-  // Simulated balance updates
   const updateBalanceFromAPI = useCallback(async () => {
     if (!token) return;
     try {
@@ -96,47 +69,31 @@ export default function Home() {
         body: JSON.stringify({ token }),
       });
       const data = await res.json();
-      if (data.success) {
-        setBalance(data.balance);
-      }
-    } catch {
-      // Silently fail - balance will be set from trade results
-    }
+      if (data.success) setBalance(data.balance);
+    } catch { /* silent */ }
   }, [token, setBalance]);
 
-  // Start scanning simulation on auth
   useEffect(() => {
     if (authStatus !== "authenticated") return;
-
     setStatusMessage("Collecting ticks (0/20 min)...");
     setScanStatus("scanning");
 
-    // Simulate tick collection
-    tickIntervalRef.current = setInterval(() => {
-      simulateTicks();
-    }, 2000);
+    tickIntervalRef.current = setInterval(() => { simulateTicks(); }, 2000);
 
-    // Simulate scan progress
     let progress = 0;
     scanIntervalRef.current = setInterval(() => {
       progress += 1;
       setScanProgress(progress);
-
       if (progress >= 20) {
         setScanStatus("ready");
         setStatusMessage("Ready to trade. Select a market and execute.");
         if (scanIntervalRef.current) clearInterval(scanIntervalRef.current);
         if (tickIntervalRef.current) clearInterval(tickIntervalRef.current);
-
-        // Find best market
         const allMarkets = useTradingStore.getState().marketData;
         let bestMarket = "1HZ75V";
         let bestQuality = 0;
         Object.entries(allMarkets).forEach(([symbol, data]) => {
-          if (data.quality > bestQuality) {
-            bestQuality = data.quality;
-            bestMarket = symbol;
-          }
+          if (data.quality > bestQuality) { bestQuality = data.quality; bestMarket = symbol; }
         });
         setSelectedMarket(bestMarket);
       } else {
@@ -153,33 +110,35 @@ export default function Home() {
   const isAuthenticated = authStatus === "authenticated";
 
   return (
-    <div className="min-h-screen bg-[#030712] flex flex-col">
-      {isAuthenticated ? (
-        <>
-          <DashboardHeader />
-          <main className="flex-1 py-4 space-y-0">
-            <StrategySelector />
-            <StrategyPanel />
-            <AIStrategist />
-            <DigitChart />
-            <MarketScanner />
-            <ExecuteButton />
-            <TradeHistory />
-          </main>
-          <Footer />
-        </>
-      ) : (
-        <>
-          <Header />
-          <main className="flex-1 flex flex-col items-center justify-center px-4 py-16">
-            <HeroSection />
-            <AuthSection />
-            <FeatureCards />
-          </main>
-          <Disclaimer />
-          <Footer />
-        </>
-      )}
-    </div>
+    <PageTransition>
+      <div className="min-h-screen bg-[#030712] flex flex-col">
+        {isAuthenticated ? (
+          <>
+            <DashboardHeader />
+            <main className="flex-1 py-4 space-y-0">
+              <StrategySelector />
+              <StrategyPanel />
+              <AIStrategist />
+              <DigitChart />
+              <MarketScanner />
+              <ExecuteButton />
+              <TradeHistory />
+            </main>
+            <Footer />
+          </>
+        ) : (
+          <>
+            <Header />
+            <main className="flex-1 flex flex-col items-center justify-center px-4 py-16">
+              <HeroSection />
+              <AuthSection />
+              <FeatureCards />
+            </main>
+            <Disclaimer />
+            <Footer />
+          </>
+        )}
+      </div>
+    </PageTransition>
   );
 }

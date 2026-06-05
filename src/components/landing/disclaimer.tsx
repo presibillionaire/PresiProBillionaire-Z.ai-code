@@ -1,7 +1,10 @@
 "use client";
 
+import { SlideUp } from "@/components/shared/animations";
+
 export function Disclaimer() {
   return (
+    <SlideUp delay={0.8}>
     <section className="px-4 pb-12">
       <div className="text-center space-y-4">
         <div className="flex items-center justify-center gap-3 text-sm text-gray-300">
@@ -27,5 +30,6 @@ export function Disclaimer() {
         </div>
       </div>
     </section>
+    </SlideUp>
   );
 }
