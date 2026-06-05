@@ -165,3 +165,28 @@ Stage Summary:
 - All 7 active strategies have detailed 8-step guides with 5 pro tips each
 - Modern glassmorphism design throughout with animated gradient backgrounds
 - Connection status visible in header, scanner, strategy selector, and execute button
+
+---
+Task ID: 7
+Agent: Main Agent
+Task: Fix UI issues - remove box borders, redesign digit strength, bigger logo, ensure tick counts
+
+Work Log:
+- Updated logo.tsx: Increased CircuitBoard icon sizes (sm: 12->18, md: 16->22, lg: 20->28), container sizes (sm: w-6->w-9, md: w-8->w-11, lg: w-10->w-14), rounded-xl containers
+- Rewrote header.tsx: Removed ALL borders from navbar elements. Changed to borderless rounded-full pill design with bg-white/[0.05] backgrounds only
+- Rewrote digit-chart.tsx: Complete redesign - 10-column grid layout, even/odd color coding (teal for even, violet for odd), horizontal even/odd split bar with percentages, animated bars in rounded containers, digit badges, count labels, legend, tick count pill
+- Rewrote market-scanner.tsx: Removed all borders, bg-gradient-to-br cards, borderless filter pills
+- Rewrote strategy-panel.tsx: Removed all borders, borderless rounded-full market pills, ring-1 for active direction
+- Rewrote strategy-selector.tsx: Removed all borders from cards, accordion trigger, icon containers, badges
+- Updated confidence-gauge.tsx: Removed borders from status pill
+- Rewrote trade-history.tsx: Removed borders from all elements
+- Rewrote ai-strategist.tsx: Removed borders from icon container
+- Updated auth-section.tsx: Removed borders from card, icon container, input, demo button
+
+Stage Summary:
+- ALL borders removed from navbar: Live, DEMO, Balance, P/L, Exit are now clean borderless pills
+- Digit Strength completely redesigned: 10-col grid, even/odd color coding, split bar, counts, legend
+- Tick counts verified working: live Deriv WebSocket data flowing (11 ticks digit chart, 85 ticks scanner)
+- CircuitBoard logo ~50% bigger across all sizes
+- Consistent borderless design across 12+ components
+- Verified via VLM browser analysis: no visible borders, clean modern design

@@ -31,38 +31,36 @@ export function MarketScanner() {
   return (
     <PopInRight delay={0.25}>
       <div className="w-full max-w-4xl mx-auto px-4 mt-4">
-        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-xl p-4 sm:p-5 relative overflow-hidden">
+        <div className="rounded-2xl bg-gradient-to-br from-white/[0.04] to-white/[0.01] backdrop-blur-xl p-4 sm:p-5 relative overflow-hidden">
           {/* Top accent line */}
           <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-teal-400/30 to-transparent" />
 
           {/* Header */}
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 bg-teal-500/10 border border-teal-400/20 rounded-lg flex items-center justify-center">
-                <Activity size={14} className="text-teal-400" />
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 bg-teal-500/12 rounded-xl flex items-center justify-center">
+                <Activity size={16} className="text-teal-400" />
               </div>
               <div>
-                <span className="text-[11px] font-medium uppercase tracking-wider text-gray-400">
-                  Market Scanner
-                </span>
+                <h3 className="text-white font-semibold text-sm tracking-tight">Market Scanner</h3>
                 <div className="flex items-center gap-2 mt-0.5">
-                  <span className="text-[10px] text-teal-400 tabular-nums">{activeMarkets}/{MARKETS.length} active</span>
+                  <span className="text-[10px] text-teal-400 font-medium tabular-nums">{activeMarkets}/{MARKETS.length} active</span>
                   <span className="text-gray-700">·</span>
-                  <span className="text-[10px] text-gray-500 tabular-nums">{totalTicks} ticks</span>
+                  <span className="text-[10px] text-gray-400 tabular-nums font-medium">{totalTicks.toLocaleString()} ticks</span>
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              {/* Live connection indicator */}
-              <div className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border ${
+            <div className="flex items-center gap-2">
+              {/* Live indicator - pill, no border */}
+              <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full ${
                 wsConnected
-                  ? "bg-teal-500/10 border-teal-400/20 text-teal-400"
-                  : "bg-red-500/10 border-red-400/20 text-red-400"
+                  ? "bg-teal-500/12 text-teal-400"
+                  : "bg-red-500/12 text-red-400"
               }`}>
-                {wsConnected ? <Wifi size={10} /> : <WifiOff size={10} />}
-                <span className="text-[9px] font-medium">{wsConnected ? "LIVE" : "OFFLINE"}</span>
+                {wsConnected ? <Wifi size={11} /> : <WifiOff size={11} />}
+                <span className="text-[9px] font-semibold">{wsConnected ? "LIVE" : "OFF"}</span>
               </div>
-              <button className="text-[9px] text-gray-600 hover:text-teal-400 flex items-center gap-1 transition-colors cursor-pointer hover:scale-105 active:scale-95">
+              <button className="text-[9px] text-gray-500 hover:text-teal-400 flex items-center gap-1 transition-colors cursor-pointer rounded-full px-2 py-1 hover:bg-white/[0.04]">
                 <RotateCcw size={10} />
                 Reset
               </button>
@@ -72,7 +70,7 @@ export function MarketScanner() {
           {/* Tick Collection Progress */}
           {scanStatus === "scanning" && isScanning && (
             <AnimatedPopup delay={0}>
-              <div className="bg-teal-500/[0.06] border border-teal-500/15 rounded-xl p-4 mb-4">
+              <div className="bg-teal-500/[0.06] rounded-xl p-4 mb-4">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
                   <span className="text-teal-300 text-[11px] font-medium">
@@ -85,13 +83,13 @@ export function MarketScanner() {
                     { title: "Standard Markets", markets: marketsStd },
                   ].map((group) => (
                     <div key={group.title} className="space-y-2">
-                      <span className="text-[9px] text-gray-500 uppercase tracking-wider">{group.title}</span>
+                      <span className="text-[9px] text-gray-500 uppercase tracking-wider font-medium">{group.title}</span>
                       {group.markets.map((m) => {
                         const md = marketData[m.symbol];
                         return (
                           <div key={m.symbol} className="flex items-center gap-2">
                             <span className="text-[10px] text-gray-400 w-16 truncate">{m.label}</span>
-                            <div className="flex-1 h-1.5 bg-gray-800/80 rounded-full overflow-hidden">
+                            <div className="flex-1 h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
                               <motion.div
                                 className="h-full bg-gradient-to-r from-teal-500 to-emerald-400 rounded-full"
                                 animate={{ width: `${Math.min((md?.ticksCollected || 0) / 20 * 100, 100)}%` }}
@@ -116,7 +114,7 @@ export function MarketScanner() {
             <div className="overflow-x-auto">
               <table className="w-full text-[10px]">
                 <thead>
-                  <tr className="border-b border-white/[0.06]">
+                  <tr className="border-b border-white/[0.04]">
                     {["#", "Market", "Ticks", "Even Str", "Odd Str", "Gap", "Stab", "Qual"].map((h) => (
                       <th key={h} className={`py-2.5 text-gray-500 font-medium uppercase tracking-wider ${h !== "#" && h !== "Market" ? "text-right" : "text-left"}`}>
                         {h}
@@ -131,7 +129,7 @@ export function MarketScanner() {
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.2, delay: i * 0.03 }}
-                      className="border-b border-white/[0.03] hover:bg-teal-500/[0.03] transition-colors"
+                      className="border-b border-white/[0.02] hover:bg-teal-500/[0.03] transition-colors"
                     >
                       <td className="py-2 text-gray-600 tabular-nums">{i + 1}</td>
                       <td className="py-2 text-white font-medium">{m.label}</td>

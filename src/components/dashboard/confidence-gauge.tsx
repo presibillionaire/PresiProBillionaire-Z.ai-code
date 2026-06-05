@@ -43,12 +43,12 @@ export function ConfidenceGauge({ confidence, direction, market, status }: Confi
             {confidence}%
           </span>
           <span className="text-[10px] text-gray-400 mt-1">{market}</span>
-          <div className={`mt-2 px-2 py-0.5 rounded-full text-[9px] font-medium ${
+          <div className={`mt-2 px-2.5 py-0.5 rounded-full text-[9px] font-medium ${
             status === "LOCKED ON"
-              ? "bg-teal-500/10 border border-teal-400/20 text-teal-300"
+              ? "bg-teal-500/12 text-teal-300"
               : status === "SCANNING"
-              ? "bg-teal-500/10 border border-teal-400/20 text-teal-300"
-              : "bg-amber-500/10 border border-amber-400/20 text-amber-300"
+              ? "bg-teal-500/12 text-teal-300"
+              : "bg-amber-500/12 text-amber-300"
           }`}>
             {status}
           </div>

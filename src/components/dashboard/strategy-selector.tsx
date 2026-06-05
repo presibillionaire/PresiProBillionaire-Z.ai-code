@@ -13,7 +13,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
 } from "@/components/ui/dialog";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -24,9 +23,9 @@ const iconMap: Record<string, React.ComponentType<{ size?: number; className?: s
 };
 
 const difficultyConfig = {
-  beginner: { label: "Beginner", className: "bg-emerald-500/15 text-emerald-400 border-emerald-500/20", color: "emerald" },
-  intermediate: { label: "Intermediate", className: "bg-amber-500/15 text-amber-400 border-amber-500/20", color: "amber" },
-  advanced: { label: "Advanced", className: "bg-red-500/15 text-red-400 border-red-500/20", color: "red" },
+  beginner: { label: "Beginner", className: "bg-emerald-500/15 text-emerald-400" },
+  intermediate: { label: "Intermediate", className: "bg-amber-500/15 text-amber-400" },
+  advanced: { label: "Advanced", className: "bg-red-500/15 text-red-400" },
 };
 
 function HowToUseModal({ strategy, open, onOpenChange }: { strategy: Strategy | null; open: boolean; onOpenChange: (open: boolean) => void }) {
@@ -41,7 +40,7 @@ function HowToUseModal({ strategy, open, onOpenChange }: { strategy: Strategy | 
       <AnimatePresence>
         {open && (
           <DialogContent
-            className="bg-gray-900/95 backdrop-blur-xl border-gray-700/60 sm:max-w-lg p-0 overflow-hidden"
+            className="bg-gray-900/95 backdrop-blur-xl border-gray-700/40 sm:max-w-lg p-0 overflow-hidden"
             showCloseButton={true}
           >
             {/* Header with gradient */}
@@ -49,11 +48,11 @@ function HowToUseModal({ strategy, open, onOpenChange }: { strategy: Strategy | 
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
-              className="relative bg-gradient-to-br from-gray-900 via-gray-900 to-teal-900/20 border-b border-white/[0.06] px-6 pt-6 pb-5 overflow-hidden"
+              className="relative bg-gradient-to-br from-gray-900 via-gray-900 to-teal-900/20 px-6 pt-6 pb-5 overflow-hidden"
             >
               <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-teal-400/40 to-transparent" />
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-11 h-11 bg-teal-500/15 border border-teal-400/25 rounded-xl flex items-center justify-center">
+                <div className="w-11 h-11 bg-teal-500/15 rounded-xl flex items-center justify-center">
                   <Icon className="text-teal-400" size={22} />
                 </div>
                 <div className="flex-1">
@@ -62,17 +61,17 @@ function HowToUseModal({ strategy, open, onOpenChange }: { strategy: Strategy | 
                 </div>
               </div>
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
+                <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-400">
                   {strategy.winRate}% Win Rate
                 </span>
-                <span className={`inline-flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-full border ${diffConfig.className}`}>
+                <span className={`inline-flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-full ${diffConfig.className}`}>
                   {diffConfig.label}
                 </span>
                 {strategy.badge && (
                   <span className={`text-[11px] font-medium px-2.5 py-1 rounded-full ${
                     strategy.badge === "NEW"
-                      ? "bg-violet-500/10 text-violet-300 border border-violet-500/20"
-                      : "bg-gray-700/50 text-gray-400 border border-gray-600/30"
+                      ? "bg-violet-500/10 text-violet-300"
+                      : "bg-gray-700/50 text-gray-400"
                   }`}>
                     {strategy.badge}
                   </span>
@@ -103,7 +102,7 @@ function HowToUseModal({ strategy, open, onOpenChange }: { strategy: Strategy | 
                       transition={{ duration: 0.3, delay: 0.1 + i * 0.05 }}
                       className="flex items-start gap-3"
                     >
-                      <div className="flex-shrink-0 w-7 h-7 bg-gradient-to-br from-teal-500/20 to-teal-500/5 border border-teal-400/20 rounded-full flex items-center justify-center mt-0.5">
+                      <div className="flex-shrink-0 w-7 h-7 bg-gradient-to-br from-teal-500/20 to-teal-500/5 rounded-full flex items-center justify-center mt-0.5">
                         <span className="text-[11px] font-bold text-teal-400">{i + 1}</span>
                       </div>
                       <p className="text-gray-300 text-[13px] leading-relaxed">{step}</p>
@@ -129,7 +128,7 @@ function HowToUseModal({ strategy, open, onOpenChange }: { strategy: Strategy | 
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ duration: 0.3, delay: 0.2 + i * 0.05 }}
-                      className="flex items-start gap-2.5 bg-amber-500/[0.04] border border-amber-500/10 rounded-xl px-3.5 py-2.5"
+                      className="flex items-start gap-2.5 bg-amber-500/[0.04] rounded-xl px-3.5 py-2.5"
                     >
                       <Lightbulb size={12} className="text-amber-400 flex-shrink-0 mt-0.5" />
                       <p className="text-gray-300 text-[13px] leading-relaxed">{tip}</p>
@@ -153,7 +152,7 @@ function HowToUseModal({ strategy, open, onOpenChange }: { strategy: Strategy | 
                     {marketLabels.map((label, i) => (
                       <span
                         key={i}
-                        className="inline-flex items-center gap-1.5 text-[12px] font-medium px-3 py-1.5 rounded-xl bg-teal-500/10 text-teal-300 border border-teal-500/15"
+                        className="inline-flex items-center gap-1.5 text-[12px] font-medium px-3 py-1.5 rounded-xl bg-teal-500/10 text-teal-300"
                       >
                         <Star size={10} className="text-teal-400 fill-teal-400/30" />
                         {label}
@@ -200,11 +199,11 @@ export function StrategySelector() {
   return (
     <SlideLeft>
       <div className="w-full max-w-4xl mx-auto px-4 pt-4">
-        {/* Accordion Trigger */}
+        {/* Accordion Trigger - borderless */}
         <PopIn>
           <button
             onClick={handleToggle}
-            className="w-full flex items-center justify-between bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] rounded-2xl px-4 py-3.5 hover:bg-white/[0.05] transition-all cursor-pointer hover:border-teal-500/20 group"
+            className="w-full flex items-center justify-between bg-white/[0.04] backdrop-blur-xl rounded-2xl px-4 py-3.5 hover:bg-white/[0.07] transition-all cursor-pointer group"
           >
             <div className="flex items-center gap-3">
               {activeStrategy && (
@@ -212,7 +211,7 @@ export function StrategySelector() {
                   {(() => {
                     const Icon = iconMap[activeStrategy.icon] || Bot;
                     return (
-                      <div className="w-9 h-9 bg-teal-500/10 border border-teal-400/20 rounded-xl flex items-center justify-center">
+                      <div className="w-9 h-9 bg-teal-500/12 rounded-xl flex items-center justify-center">
                         <Icon className="text-teal-400" size={16} />
                       </div>
                     );
@@ -260,22 +259,22 @@ export function StrategySelector() {
                     <motion.button
                       disabled={isDisabled}
                       onClick={() => handleSelect(strategy)}
-                      whileHover={!isDisabled ? { scale: 1.02, boxShadow: "0 0 30px rgba(20, 184, 166, 0.1)" } : {}}
+                      whileHover={!isDisabled ? { scale: 1.02 } : {}}
                       whileTap={!isDisabled ? { scale: 0.98 } : {}}
-                      className={`relative flex flex-col gap-2.5 p-4 rounded-2xl border text-left transition-all cursor-pointer group overflow-hidden ${
+                      className={`relative flex flex-col gap-2.5 p-4 rounded-2xl text-left transition-all cursor-pointer group overflow-hidden ${
                         isDisabled
-                          ? "opacity-45 cursor-not-allowed bg-white/[0.02] border-white/[0.04]"
+                          ? "opacity-45 cursor-not-allowed bg-white/[0.02]"
                           : isActive
-                          ? "ring-2 ring-teal-400/30 bg-teal-500/[0.08] border-teal-400/20 shadow-xl shadow-teal-500/10"
-                          : "bg-white/[0.03] backdrop-blur-xl border-white/[0.08] hover:bg-white/[0.06] hover:border-teal-500/20"
+                          ? "ring-2 ring-teal-400/25 bg-teal-500/[0.08] shadow-xl shadow-teal-500/10"
+                          : "bg-white/[0.04] backdrop-blur-xl hover:bg-white/[0.07]"
                       }`}
                     >
                       {/* Top row: icon + badges */}
                       <div className="flex items-center justify-between w-full">
                         <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${
                           isActive
-                            ? "bg-teal-500/20 border border-teal-400/30"
-                            : "bg-gray-800/80 border border-white/[0.08]"
+                            ? "bg-teal-500/20"
+                            : "bg-white/[0.06]"
                         }`}>
                           <Icon
                             className={isActive ? "text-teal-400" : "text-gray-400"}
@@ -284,7 +283,7 @@ export function StrategySelector() {
                         </div>
                         <div className="flex items-center gap-1.5">
                           {strategy.winRate > 0 && (
-                            <span className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">
+                            <span className="text-[9px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400">
                               {strategy.winRate}%
                             </span>
                           )}
@@ -314,13 +313,13 @@ export function StrategySelector() {
 
                       {/* Bottom row: difficulty + How to Use */}
                       <div className="flex items-center justify-between w-full gap-2">
-                        <span className={`text-[9px] font-medium px-2 py-0.5 rounded-lg border ${diffConfig.className}`}>
+                        <span className={`text-[9px] font-medium px-2 py-0.5 rounded-lg ${diffConfig.className}`}>
                           {diffConfig.label}
                         </span>
                         {!isDisabled && (
                           <span
                             onClick={(e) => handleHowToUse(e, strategy)}
-                            className="inline-flex items-center gap-1 text-[10px] font-medium text-teal-400 border border-teal-500/25 rounded-lg px-2 py-0.5 hover:bg-teal-500/10 transition-colors cursor-pointer"
+                            className="inline-flex items-center gap-1 text-[10px] font-medium text-teal-400 bg-teal-500/10 rounded-lg px-2 py-0.5 hover:bg-teal-500/15 transition-colors cursor-pointer"
                           >
                             <CircleHelp size={10} />
                             How to Use
@@ -332,7 +331,7 @@ export function StrategySelector() {
                       {isActive && (
                         <div className="absolute top-3 right-3 flex items-center justify-center">
                           <div className="w-2.5 h-2.5 rounded-full bg-teal-400 animate-pulse" />
-                          <div className="absolute w-4 h-4 rounded-full border-2 border-teal-400/30 animate-ping" />
+                          <div className="absolute w-4 h-4 rounded-full ring-2 ring-teal-400/30 animate-ping" />
                         </div>
                       )}
                     </motion.button>

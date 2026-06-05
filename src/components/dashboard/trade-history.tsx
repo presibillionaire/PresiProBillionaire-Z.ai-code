@@ -22,26 +22,24 @@ export function TradeHistory() {
   return (
     <SlideUp delay={0.35}>
       <div className="w-full max-w-4xl mx-auto px-4 mt-4 mb-8">
-        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-xl shadow-2xl shadow-black/40 p-4 sm:p-5 relative overflow-hidden">
+        <div className="rounded-2xl bg-gradient-to-br from-white/[0.04] to-white/[0.01] backdrop-blur-xl shadow-2xl shadow-black/40 p-4 sm:p-5 relative overflow-hidden">
           {/* Top accent line */}
           <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-teal-400/20 to-transparent" />
 
           {/* Header */}
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 bg-teal-500/10 border border-teal-400/20 rounded-lg flex items-center justify-center">
-                <History size={14} className="text-teal-400" />
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 bg-teal-500/12 rounded-xl flex items-center justify-center">
+                <History size={16} className="text-teal-400" />
               </div>
               <div>
-                <span className="text-[11px] font-medium uppercase tracking-wider text-gray-400">
-                  Trade History
-                </span>
+                <h3 className="text-white font-semibold text-sm tracking-tight">Trade History</h3>
                 <div className="flex items-center gap-2 mt-0.5">
-                  <span className="text-[10px] text-gray-600 tabular-nums">{trades.length} trades</span>
+                  <span className="text-[10px] text-gray-500 tabular-nums font-medium">{trades.length} trades</span>
                   {sessionPL !== 0 && (
                     <>
                       <span className="text-gray-700">·</span>
-                      <span className={`text-[10px] tabular-nums font-medium ${sessionPL >= 0 ? "text-teal-400" : "text-red-400"}`}>
+                      <span className={`text-[10px] tabular-nums font-semibold ${sessionPL >= 0 ? "text-teal-400" : "text-red-400"}`}>
                         P/L: {sessionPL >= 0 ? "+" : ""}{sessionPL.toFixed(2)}
                       </span>
                     </>
@@ -50,8 +48,8 @@ export function TradeHistory() {
               </div>
             </div>
 
-            {/* Filter Tabs */}
-            <div className="flex items-center bg-white/[0.03] border border-white/[0.06] rounded-xl p-1 gap-0.5">
+            {/* Filter Tabs - borderless */}
+            <div className="flex items-center bg-white/[0.04] rounded-xl p-1 gap-0.5">
               {([
                 { key: "all" as Filter, label: "All", count: trades.length, icon: null },
                 { key: "win" as Filter, label: "Win", count: winCount, icon: <Trophy size={10} /> },
@@ -63,8 +61,8 @@ export function TradeHistory() {
                   onClick={() => setFilter(f.key)}
                   className={`px-3 py-1.5 rounded-lg text-[10px] font-medium transition-all flex items-center gap-1 cursor-pointer ${
                     filter === f.key
-                      ? "bg-teal-500/20 text-teal-300 border border-teal-400/20 shadow-sm"
-                      : "text-gray-500 hover:text-gray-400 border border-transparent"
+                      ? "bg-teal-500/15 text-teal-300"
+                      : "text-gray-500 hover:text-gray-400"
                   }`}
                 >
                   {f.icon}
@@ -90,7 +88,7 @@ export function TradeHistory() {
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ duration: 0.2, delay: i * 0.03 }}
-                  className="flex items-center justify-between p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.04] hover:bg-white/[0.04] hover:border-teal-500/10 transition-all"
+                  className="flex items-center justify-between p-3.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.04] transition-all"
                 >
                   <div className="flex items-center gap-3">
                     {/* Status indicator */}

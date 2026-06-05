@@ -9,13 +9,13 @@ export function AIStrategist() {
   return (
     <PopInRight delay={0.15}>
       <div className="w-full max-w-4xl mx-auto px-4 mt-4">
-        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-xl p-4 sm:p-5 relative overflow-hidden">
+        <div className="rounded-2xl bg-gradient-to-br from-white/[0.04] to-white/[0.01] backdrop-blur-xl p-4 sm:p-5 relative overflow-hidden">
           {/* Ambient glow */}
-          <div className="pointer-events-none absolute -top-10 right-10 h-32 w-32 rounded-full blur-3xl bg-violet-500/10 animate-pulse-glow" />
+          <div className="pointer-events-none absolute -top-10 right-10 h-32 w-32 rounded-full blur-3xl bg-violet-500/10" />
 
           <div className="relative flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-violet-500/15 border border-violet-400/20 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-violet-500/12 rounded-xl flex items-center justify-center">
                 <BrainCircuit className="text-violet-400" size={20} />
               </div>
               <div>
@@ -48,7 +48,7 @@ export function AIStrategist() {
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
-                className="mt-4 pt-4 border-t border-white/[0.06]"
+                className="mt-4 pt-4 border-t border-white/[0.04]"
               >
                 <div className="flex items-center gap-2 text-gray-500 text-xs">
                   <Sparkles size={14} className="text-violet-400" />

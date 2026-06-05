@@ -1,4 +1,4 @@
-import { Zap, RefreshCw, Bot, Settings, Wifi, WifiOff, TrendingUp, Target, DollarSign, Shield } from "lucide-react";
+import { Zap, RefreshCw, Bot, Settings, Wifi, Target, DollarSign, Shield, TrendingUp } from "lucide-react";
 import { useTradingStore } from "@/stores/trading-store";
 import type { Direction } from "@/stores/trading-store";
 import { ConfidenceGauge } from "./confidence-gauge";
@@ -11,7 +11,7 @@ export function StrategyPanel() {
     signalThreshold, cooldown, confirmCycles,
     trendAgreement, takeProfit, marketData, selectedMarket,
     sessionPL, scanStatus, statusMessage, settingsOpen,
-    wsConnected, lastTickTime,
+    wsConnected,
     toggleSettings, setDirection, setMode, setStake,
     setSignalThreshold, setCooldown, setConfirmCycles,
     setTrendAgreement, setTakeProfit, setSelectedMarket,
@@ -41,18 +41,18 @@ export function StrategyPanel() {
   return (
     <AnimatedPopup delay={0.05}>
       <div className="relative w-full max-w-4xl mx-auto px-4 mt-4">
-        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-xl shadow-2xl shadow-black/40 overflow-hidden">
+        <div className="rounded-2xl bg-gradient-to-br from-white/[0.04] to-white/[0.01] backdrop-blur-xl shadow-2xl shadow-black/40 overflow-hidden">
           {/* Top accent line */}
           <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-teal-400/40 to-transparent" />
 
           {/* Ambient glow */}
-          <div className="pointer-events-none absolute -top-20 left-1/3 h-44 w-72 rounded-full blur-3xl bg-teal-500/10 animate-pulse-glow" />
+          <div className="pointer-events-none absolute -top-20 left-1/3 h-44 w-72 rounded-full blur-3xl bg-teal-500/10" />
 
           <div className="relative p-4 sm:p-6 space-y-6">
             {/* Header */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-11 h-11 bg-teal-500/10 border border-teal-400/20 rounded-xl flex items-center justify-center">
+                <div className="w-11 h-11 bg-teal-500/12 rounded-xl flex items-center justify-center">
                   <Zap className="text-teal-400" size={20} />
                 </div>
                 <div>
@@ -63,10 +63,10 @@ export function StrategyPanel() {
                     <div
                       className={`px-2.5 py-0.5 rounded-full text-[9px] font-medium ${
                         scanStatus === "scanning" || scanStatus === "ready"
-                          ? "bg-teal-500/10 border border-teal-400/20 text-teal-300"
+                          ? "bg-teal-500/12 text-teal-300"
                           : scanStatus === "trading"
-                          ? "bg-amber-500/10 border border-amber-400/20 text-amber-300"
-                          : "bg-gray-500/10 border border-gray-400/20 text-gray-300"
+                          ? "bg-amber-500/12 text-amber-300"
+                          : "bg-white/[0.06] text-gray-300"
                       }`}
                     >
                       <div className="flex items-center gap-1.5">
@@ -91,7 +91,7 @@ export function StrategyPanel() {
                       {activeStrategy?.description?.substring(0, 60)}…
                     </p>
                     {lastDigit !== null && (
-                      <span className="text-[10px] text-gray-600">Last digit: <span className="text-white font-mono">{lastDigit}</span></span>
+                      <span className="text-[10px] text-gray-600">Last: <span className="text-white font-mono font-semibold">{lastDigit}</span></span>
                     )}
                   </div>
                 </div>
@@ -100,17 +100,17 @@ export function StrategyPanel() {
                 onClick={toggleSettings}
                 className={`p-2.5 rounded-xl transition-all cursor-pointer hover:scale-110 active:scale-95 ${
                   settingsOpen
-                    ? "bg-teal-500/10 border border-teal-400/20 text-teal-400"
-                    : "text-gray-400 hover:text-white bg-white/[0.03] border border-white/[0.08]"
+                    ? "bg-teal-500/12 text-teal-400"
+                    : "text-gray-500 hover:text-white bg-white/[0.04]"
                 }`}
               >
                 <Settings size={16} />
               </button>
             </div>
 
-            {/* Market selector */}
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-[9px] font-medium uppercase tracking-wider text-gray-500">Market:</span>
+            {/* Market selector - borderless pills */}
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-[9px] font-medium uppercase tracking-wider text-gray-500 mr-1">Market</span>
               {[
                 { symbol: "1HZ10V", label: "Vol 10" },
                 { symbol: "1HZ25V", label: "Vol 25" },
@@ -121,10 +121,10 @@ export function StrategyPanel() {
                 <button
                   key={m.symbol}
                   onClick={() => setSelectedMarket(m.symbol)}
-                  className={`px-2.5 py-1 rounded-lg text-[10px] font-medium transition-all cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-full text-[10px] font-medium transition-all cursor-pointer ${
                     selectedMarket === m.symbol
-                      ? "bg-teal-500/15 border border-teal-400/25 text-teal-300"
-                      : "bg-white/[0.03] border border-white/[0.06] text-gray-500 hover:text-gray-300 hover:border-white/[0.12]"
+                      ? "bg-teal-500/15 text-teal-300 shadow-sm shadow-teal-500/10"
+                      : "bg-white/[0.04] text-gray-500 hover:bg-white/[0.08] hover:text-gray-300"
                   }`}
                 >
                   {m.label}
@@ -145,7 +145,7 @@ export function StrategyPanel() {
                 </div>
               </PopIn>
 
-              {/* Direction Buttons */}
+              {/* Direction Buttons - borderless */}
               <div className="flex gap-2">
                 {directions.map((dir, i) => (
                   <AnimatedPopup key={dir.key} delay={0.15 + i * 0.04}>
@@ -155,8 +155,8 @@ export function StrategyPanel() {
                       whileTap={{ scale: 0.95 }}
                       className={`px-5 py-2.5 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
                         direction === dir.key
-                          ? "bg-teal-500/15 border border-teal-400/25 ring-1 ring-teal-400/40 text-teal-300 shadow-lg shadow-teal-500/10"
-                          : "bg-white/[0.03] border border-white/[0.08] text-gray-500 hover:bg-white/[0.06] hover:text-gray-300"
+                          ? "bg-teal-500/15 ring-1 ring-teal-400/30 text-teal-300 shadow-lg shadow-teal-500/10"
+                          : "bg-white/[0.04] text-gray-500 hover:bg-white/[0.08] hover:text-gray-300"
                       }`}
                     >
                       {dir.icon}
@@ -166,12 +166,12 @@ export function StrategyPanel() {
                 ))}
               </div>
 
-              {/* Mode Toggle */}
-              <div className="flex items-center bg-white/[0.03] border border-white/[0.08] rounded-xl p-1">
+              {/* Mode Toggle - borderless */}
+              <div className="flex items-center bg-white/[0.04] rounded-xl p-1">
                 <button
                   onClick={() => setMode("standard")}
                   className={`px-4 py-2 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
-                    mode === "standard" ? "bg-teal-500/20 text-teal-300 shadow-md" : "text-gray-500 hover:text-gray-300"
+                    mode === "standard" ? "bg-teal-500/15 text-teal-300 shadow-md" : "text-gray-500 hover:text-gray-300"
                   }`}
                 >
                   <Zap size={12} />
@@ -180,7 +180,7 @@ export function StrategyPanel() {
                 <button
                   onClick={() => setMode("reverse")}
                   className={`px-4 py-2 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
-                    mode === "reverse" ? "bg-violet-500/20 text-violet-300 shadow-md" : "text-gray-500 hover:text-gray-300"
+                    mode === "reverse" ? "bg-violet-500/15 text-violet-300 shadow-md" : "text-gray-500 hover:text-gray-300"
                   }`}
                 >
                   <RefreshCw size={12} />
@@ -232,7 +232,7 @@ export function StrategyPanel() {
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="w-full bg-teal-500/[0.06] border border-teal-500/15 rounded-xl px-4 py-3 flex items-center gap-2.5"
+                  className="w-full bg-teal-500/[0.06] rounded-xl px-4 py-3 flex items-center gap-2.5"
                 >
                   <div className="w-2 h-2 rounded-full bg-teal-400 animate-pulse flex-shrink-0" />
                   <span className="text-teal-300 text-xs font-mono">{statusMessage}</span>
@@ -243,7 +243,7 @@ export function StrategyPanel() {
             {/* Settings Panel */}
             {settingsOpen && (
               <SlideUp delay={0}>
-                <div className="border-t border-white/[0.06] pt-5 space-y-5">
+                <div className="border-t border-white/[0.04] pt-5 space-y-5">
                   <h3 className="text-sm text-gray-200 font-semibold uppercase tracking-wider flex items-center gap-2">
                     <Settings size={14} className="text-gray-500" />
                     Settings
@@ -253,12 +253,12 @@ export function StrategyPanel() {
                     <div className="space-y-1.5">
                       <label className="text-[9px] font-medium uppercase tracking-wider text-gray-500">Stake (USD)</label>
                       <input type="number" value={stake} onChange={(e) => setStake(parseFloat(e.target.value) || 0)}
-                        className="w-full bg-gray-800/80 border border-white/[0.08] text-white text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/20 tabular-nums transition-all" />
+                        className="w-full bg-white/[0.04] text-white text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:ring-1 focus:ring-teal-500/30 tabular-nums transition-all" />
                     </div>
                     <div className="space-y-1.5">
                       <label className="text-[9px] font-medium uppercase tracking-wider text-gray-500">Take Profit (USD)</label>
                       <input type="number" value={takeProfit} onChange={(e) => setTakeProfit(parseFloat(e.target.value) || 0)}
-                        className="w-full bg-gray-800/80 border border-white/[0.08] text-white text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/20 tabular-nums transition-all" />
+                        className="w-full bg-white/[0.04] text-white text-sm rounded-xl px-4 py-2.5 focus:outline-none focus:ring-1 focus:ring-teal-500/30 tabular-nums transition-all" />
                     </div>
                   </div>
 
@@ -299,7 +299,7 @@ function StatCard({ label, value, detail, positive, neutral, icon }: {
   label: string; value: string; detail: string; positive?: boolean; neutral?: boolean; icon?: React.ReactNode;
 }) {
   return (
-    <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl p-3.5 hover:border-teal-500/10 transition-all group">
+    <div className="bg-white/[0.03] rounded-xl p-3.5 hover:bg-white/[0.06] transition-all group">
       <div className="flex items-center gap-1.5 mb-1.5">
         <span className="text-gray-600 group-hover:text-teal-400 transition-colors">{icon}</span>
         <span className="text-[9px] font-medium uppercase tracking-wider text-gray-500">{label}</span>

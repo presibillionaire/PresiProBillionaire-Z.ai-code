@@ -52,9 +52,9 @@ export function AuthSection() {
 
       {/* Manual Token Card */}
       <AnimatedPopup delay={0.55}>
-        <div className="w-full max-w-sm bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] rounded-2xl p-5 text-left space-y-4 shadow-2xl shadow-black/20">
+        <div className="w-full max-w-sm bg-white/[0.04] backdrop-blur-xl rounded-2xl p-5 text-left space-y-4 shadow-2xl shadow-black/20">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 bg-teal-500/10 border border-teal-400/20 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-teal-500/12 rounded-lg flex items-center justify-center">
               <Key className="text-teal-400" size={14} />
             </div>
             <div>
@@ -64,7 +64,7 @@ export function AuthSection() {
           </div>
 
           {/* Connection indicator */}
-          <div className="flex items-center gap-2 bg-gray-800/50 rounded-lg px-3 py-2 border border-white/[0.04]">
+          <div className="flex items-center gap-2 bg-white/[0.04] rounded-lg px-3 py-2">
             <WifiOff className="text-gray-600" size={12} />
             <span className="text-gray-500 text-[10px]">WebSocket: <span className="text-gray-400">Ready to connect</span></span>
           </div>
@@ -74,7 +74,7 @@ export function AuthSection() {
             <input
               type={showToken ? "text" : "password"}
               placeholder="Paste your Deriv API token…"
-              className="w-full bg-gray-800/80 border border-white/[0.08] text-gray-200 text-sm rounded-xl px-4 py-3 pr-10 focus:outline-none focus:border-teal-500/50 focus:ring-1 focus:ring-teal-500/20 placeholder-gray-600 transition-all"
+              className="w-full bg-white/[0.04] text-gray-200 text-sm rounded-xl px-4 py-3 pr-10 focus:outline-none focus:ring-1 focus:ring-teal-500/30 placeholder-gray-600 transition-all"
               autoComplete="off"
               spellCheck={false}
               value={tokenInput}
@@ -139,7 +139,7 @@ export function AuthSection() {
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.98 }}
             onClick={handleDemo}
-            className="w-full flex items-center justify-center gap-2.5 py-3 rounded-xl font-medium text-sm bg-white/[0.03] border border-white/[0.08] text-gray-400 hover:bg-white/[0.06] hover:text-gray-300 hover:border-white/[0.12] transition-all cursor-pointer"
+            className="w-full flex items-center justify-center gap-2.5 py-3 rounded-xl font-medium text-sm bg-white/[0.04] text-gray-400 hover:bg-white/[0.07] hover:text-gray-300 transition-all cursor-pointer"
           >
             <Play size={16} className="text-teal-400" />
             Try Demo Mode
