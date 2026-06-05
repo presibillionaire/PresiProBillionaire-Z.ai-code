@@ -190,3 +190,39 @@ Stage Summary:
 - CircuitBoard logo ~50% bigger across all sizes
 - Consistent borderless design across 12+ components
 - Verified via VLM browser analysis: no visible borders, clean modern design
+
+---
+Task ID: 8
+Agent: Main Agent
+Task: Fix trade execution - trades not being placed
+
+Work Log:
+- Diagnosed TWO critical issues preventing trades:
+  1. use-deriv-trade.ts used WRONG Deriv API format: sent direct `buy` with `parameters` dict, but Deriv requires `proposal`→`buy` two-step flow
+  2. execute-button.tsx had mock `setTimeout` simulation (lines 43-58) that overrode real WebSocket trade results after 3 seconds
+- Rewrote use-deriv-trade.ts: Complete 4-step Deriv trade flow:
+  - Step 1: Send `proposal` request with contract_type, symbol, amount, duration, barrier
+  - Step 2: Receive proposal ID + ask_price, send `buy` request with proposal ID
+  - Step 3: Handle buy response, add trade to history with "open" status, subscribe to proposal_open_contract
+  - Step 4: Handle contract completion (won/lost), update trade result and session P/L
+  - Strategy-specific contract type mapping (DIGITEVEN/ODD for M Pro, DIGITOVER/UNDER for Sniper X, CALL/PUT for Rise Fall)
+  - Mode reversal support for all contract types
+  - Barrier support (digit 4 for OVER, digit 5 for UNDER)
+  - Proper error handling with user-facing status messages
+  - 30-second safety timeout
+- Rewrote execute-button.tsx:
+  - Removed mock setTimeout simulation entirely
+  - Trades now only result from real Deriv WebSocket responses
+  - Added cooldown tracking between trades
+  - Added take-profit detection (disables button when target reached)
+  - Color-coded status messages (teal for info, green for wins, red for errors)
+  - Quick session stats display (trades/won/lost/win rate)
+  - Clear disabled state messages (Not Connected, Scanning, Low Signal, Cooldown)
+- Verified: Zero lint errors, HMR updates applied cleanly, landing page loads with no errors
+
+Stage Summary:
+- Trade execution now uses correct Deriv API: proposal → buy → contract subscription → result tracking
+- Mock simulation completely removed - all trade results come from real Deriv WebSocket
+- User-facing status messages at every step: proposal request, proposal received, trade opened, won/lost, errors
+- Trades require valid authorized Deriv API token (demo token will show auth error from Deriv)
+- Take profit and cooldown mechanics properly implemented
