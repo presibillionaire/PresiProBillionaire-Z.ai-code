@@ -1,6 +1,5 @@
-"use client";
 
-import { Zap } from "lucide-react";
+import { CircuitBoard } from "lucide-react";
 
 interface LogoProps {
   size?: "sm" | "md" | "lg";
@@ -19,8 +18,11 @@ export function Logo({ size = "md" }: LogoProps) {
     <div className="flex items-center gap-2">
       <div
         className={`${s.container} bg-gradient-to-br from-teal-400 to-emerald-500 rounded-lg flex items-center justify-center`}
+        style={{
+          animation: "circuit-rock 3s ease-in-out infinite, circuit-glow 2s ease-in-out infinite",
+        }}
       >
-        <Zap className={`text-white`} size={s.icon} strokeWidth={2.5} />
+        <CircuitBoard className={`text-white`} size={s.icon} strokeWidth={2.5} />
       </div>
       <span className={`${s.text} text-white font-bold tracking-tight`}>
         PresiProBillionaire

@@ -1,4 +1,3 @@
-"use client";
 
 import { SlideUp, AnimatedPopup, FadeIn, PageTransition, AnimatedPresence } from "@/components/shared/animations";
 

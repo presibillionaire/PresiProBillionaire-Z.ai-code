@@ -1,4 +1,3 @@
-"use client";
 
 import { Sparkles, Bot } from "lucide-react";
 import { useTradingStore } from "@/stores/trading-store";

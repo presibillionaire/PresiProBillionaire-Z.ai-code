@@ -1,4 +1,3 @@
-"use client";
 
 import { TrendingUp, BarChart2, Link2 } from "lucide-react";
 import { StaggerGrid, StaggerItem, AnimatedCard } from "@/components/shared/animations";

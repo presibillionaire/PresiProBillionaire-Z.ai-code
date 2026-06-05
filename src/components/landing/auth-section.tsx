@@ -1,4 +1,3 @@
-"use client";
 
 import { useState } from "react";
 import { Key, Eye, EyeOff, LogIn, ExternalLink, Play } from "lucide-react";

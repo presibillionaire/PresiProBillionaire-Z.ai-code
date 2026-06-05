@@ -1,4 +1,3 @@
-"use client";
 
 import { Zap, RefreshCw, Bot, Settings } from "lucide-react";
 import { useTradingStore } from "@/stores/trading-store";

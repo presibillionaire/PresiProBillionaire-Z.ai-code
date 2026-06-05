@@ -1,4 +1,3 @@
-"use client";
 
 import { motion, type Variants, AnimatePresence } from "framer-motion";
 import React from "react";

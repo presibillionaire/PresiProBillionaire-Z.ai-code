@@ -1,4 +1,3 @@
-"use client";
 
 import { SlideUp } from "@/components/shared/animations";
 

@@ -1,4 +1,3 @@
-"use client";
 
 import { AnimatedPopup } from "@/components/shared/animations";
 

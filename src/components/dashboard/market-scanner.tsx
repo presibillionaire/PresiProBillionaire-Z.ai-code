@@ -1,4 +1,3 @@
-"use client";
 
 import { Activity, RotateCcw } from "lucide-react";
 import { useTradingStore } from "@/stores/trading-store";
