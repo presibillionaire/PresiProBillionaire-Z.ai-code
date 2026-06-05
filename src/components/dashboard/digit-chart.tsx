@@ -10,7 +10,7 @@ export function DigitChart() {
 
   const digitStrengths = useMemo(() => {
     if (!currentMarket?.lastDigits || currentMarket.lastDigits.length === 0) {
-      return Array.from({ length: 10 }, (_, i) => ({ digit: i, strength: 0 }));
+      return Array.from({ length: 10 }, (_, i) => ({ digit: i, strength: 0, isTop: false }));
     }
     const counts = Array(10).fill(0);
     currentMarket.lastDigits.forEach((d) => { if (d >= 0 && d <= 9) counts[d]++; });
