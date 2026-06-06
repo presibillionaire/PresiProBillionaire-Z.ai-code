@@ -28,23 +28,19 @@ export function ExecuteButton() {
   const tpReached = sessionPL >= takeProfit && takeProfit > 0;
   const [cooldownActive, setCooldownActive] = useState(false);
   const cooldownTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const prevTradingRef = useRef(false);
 
   const handleExecute = () => {
     if (!canTrade || cooldownActive || tpReached) return;
 
-    // Set trading state before executing
     setIsTrading(true);
     setStatusMessage(`Initiating trade: ${direction} · ${currentMarket?.label || "Unknown"} · ${stake.toFixed(2)} USD`);
-
-    // Execute via WebSocket — the hook handles the full proposal→buy→result flow
     executeTrade();
   };
 
-  // Cooldown after each trade completes
+  // Cooldown: detect when isTrading transitions from true → false
   useEffect(() => {
-    const prevTrading = useRef(isTrading);
-    if (prevTrading.current && !isTrading) {
-      // Trading just finished — start cooldown
+    if (prevTradingRef.current && !isTrading) {
       const cooldownSec = useTradingStore.getState().cooldown;
       if (cooldownSec > 0) {
         setCooldownActive(true);
@@ -53,10 +49,10 @@ export function ExecuteButton() {
         }, cooldownSec * 1000);
       }
     }
-    prevTrading.current = isTrading;
+    prevTradingRef.current = isTrading;
   }, [isTrading]);
 
-  // Cleanup cooldown timer
+  // Cleanup cooldown timer on unmount
   useEffect(() => {
     return () => {
       if (cooldownTimerRef.current) clearTimeout(cooldownTimerRef.current);
@@ -64,23 +60,41 @@ export function ExecuteButton() {
   }, []);
 
   // Determine button state
-  const getButtonState = () => {
-    if (tpReached) return { disabled: true, label: "Take Profit Reached", sub: `${sessionPL.toFixed(2)} USD — session complete` };
-    if (isTrading) return { disabled: true, label: "Executing Trade...", sub: "Waiting for Deriv response" };
-    if (cooldownActive) return { disabled: true, label: "Cooldown Active", sub: "Waiting before next trade" };
-    if (!wsConnected) return { disabled: true, label: "Not Connected", sub: "WebSocket disconnected" };
-    if (scanStatus !== "ready") return { disabled: true, label: "Scanning Markets", sub: "Collecting tick data..." };
-    if (confidence < 50) return { disabled: true, label: "Low Signal", sub: `${Math.round(confidence)}% — need 50%+ confidence` };
-    return { disabled: false, label: "", sub: "" };
-  };
+  let btnDisabled = false;
+  let btnLabel = "";
+  let btnSub = "";
 
-  const btnState = getButtonState();
+  if (tpReached) {
+    btnDisabled = true;
+    btnLabel = "Take Profit Reached";
+    btnSub = `${sessionPL.toFixed(2)} USD — session complete`;
+  } else if (isTrading) {
+    btnDisabled = true;
+    btnLabel = "Executing Trade...";
+    btnSub = "Waiting for Deriv response";
+  } else if (cooldownActive) {
+    btnDisabled = true;
+    btnLabel = "Cooldown Active";
+    btnSub = "Waiting before next trade";
+  } else if (!wsConnected) {
+    btnDisabled = true;
+    btnLabel = "Not Connected";
+    btnSub = "WebSocket disconnected";
+  } else if (scanStatus !== "ready") {
+    btnDisabled = true;
+    btnLabel = "Scanning Markets";
+    btnSub = "Collecting tick data...";
+  } else if (confidence < 50) {
+    btnDisabled = true;
+    btnLabel = "Low Signal";
+    btnSub = `${Math.round(confidence)}% — need 50%+ confidence`;
+  }
 
   return (
     <AnimatedPopup delay={0.3}>
       <div className="w-full max-w-4xl mx-auto px-4 mt-4">
         {/* Execute Button */}
-        {!btnState.disabled ? (
+        {!btnDisabled ? (
           <PulseScale>
             <motion.button
               whileHover={{ scale: 1.01, boxShadow: "0 0 50px rgba(20, 184, 166, 0.4)" }}
@@ -88,7 +102,6 @@ export function ExecuteButton() {
               onClick={handleExecute}
               className="w-full rounded-2xl py-4 font-bold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer bg-gradient-to-r from-teal-500 to-emerald-500 text-white shadow-2xl shadow-teal-500/40 relative overflow-hidden"
             >
-              {/* Animated shine */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer" />
               <div className="relative flex items-center gap-2">
                 <Play size={18} />
@@ -109,8 +122,8 @@ export function ExecuteButton() {
             ) : (
               <Play size={18} />
             )}
-            <span>{btnState.label}</span>
-            {btnState.sub && <span className="text-white/10">· {btnState.sub}</span>}
+            <span>{btnLabel}</span>
+            {btnSub && <span className="text-white/10">· {btnSub}</span>}
           </button>
         )}
 
