@@ -133,7 +133,7 @@ export const useTradingStore = create<TradingState>((set, get) => ({
   mode: "standard",
   stake: 10,
   tickDuration: 2,
-  signalThreshold: 62,
+  signalThreshold: 30,
   minGap: 6,
   cooldown: 5,
   confirmCycles: 3,

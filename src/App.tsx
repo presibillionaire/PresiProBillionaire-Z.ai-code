@@ -31,37 +31,45 @@ function processTick(symbol: string, quote: number) {
   const currentData = s.marketData[symbol];
   if (!currentData) return;
 
+  // Keep last 100 digits for chart display
   const lastDigits = [...currentData.lastDigits, lastDigit].slice(-100);
   const totalTicks = lastDigits.length;
 
+  // === Signal analysis uses a SHORT window (last 25 ticks) for fast reaction ===
+  const signalWindow = lastDigits.slice(-25);
+  const signalTicks = signalWindow.length;
+
   let evenCount = 0;
   let oddCount = 0;
-  lastDigits.forEach((d) => {
+  signalWindow.forEach((d) => {
     if (d % 2 === 0) evenCount++;
     else oddCount++;
   });
 
-  const evenStrength = totalTicks > 0 ? (evenCount / totalTicks) * 100 : 50;
-  const oddStrength = totalTicks > 0 ? (oddCount / totalTicks) * 100 : 50;
+  const evenStrength = signalTicks > 0 ? (evenCount / signalTicks) * 100 : 50;
+  const oddStrength = signalTicks > 0 ? (oddCount / signalTicks) * 100 : 50;
   const gap = Math.abs(evenStrength - oddStrength);
 
+  // Stability: consistency across small sliding windows (5-tick windows)
   let stability = 50;
-  if (totalTicks >= 10) {
-    const windowSize = 10;
+  if (signalTicks >= 5) {
+    const windowSize = 5;
     let stableCount = 0;
-    const totalWindows = Math.floor(totalTicks / windowSize);
+    const totalWindows = Math.floor(signalTicks / windowSize);
     for (let w = 0; w < totalWindows; w++) {
-      const window = lastDigits.slice(w * windowSize, (w + 1) * windowSize);
+      const slice = signalWindow.slice(w * windowSize, (w + 1) * windowSize);
       let wEven = 0;
-      window.forEach((d) => { if (d % 2 === 0) wEven++; });
+      slice.forEach((d) => { if (d % 2 === 0) wEven++; });
       const wRatio = (wEven / windowSize) * 100;
-      if (Math.abs(wRatio - evenStrength) < 15) stableCount++;
+      if (Math.abs(wRatio - evenStrength) < 25) stableCount++;
     }
     stability = totalWindows > 0 ? (stableCount / totalWindows) * 100 : 50;
   }
 
-  const quality = (gap * 0.6) + (stability * 0.4);
-  const confidence = Math.min(100, Math.max(0, gap * (stability / 100) * 1.5));
+  const quality = (gap * 0.7) + (stability * 0.3);
+  // Aggressive confidence: reacts quickly to short-term streaks
+  // A gap of 8% with 50% stability → ~22%, gap 12% → ~33%, gap 16% → ~44%
+  const confidence = Math.min(100, Math.max(0, (gap * 2.5) * (stability / 100) + (gap * 1.2)));
   const direction = evenStrength > oddStrength + 2 ? "EVEN" as const
     : oddStrength > evenStrength + 2 ? "ODD" as const
     : "NEUTRAL" as const;
@@ -78,7 +86,8 @@ function processTick(symbol: string, quote: number) {
   const scanProgress = Math.round((marketsWithMinTicks / MARKETS.length) * 100);
   s.setScanProgress(scanProgress);
 
-  if (scanProgress >= 80 && s.scanStatus === "scanning") {
+  // Ready when at least half the markets have minimum ticks
+  if (scanProgress >= 50 && s.scanStatus === "scanning") {
     s.setScanStatus("ready");
     s.setStatusMessage("Scan complete — ready to trade");
   }
@@ -114,7 +123,7 @@ function connectWs() {
         store.getState().setIsScanning(true);
         store.getState().setScanStatus("scanning");
         store.getState().setStatusMessage("Subscribed to all 10 markets — collecting ticks");
-      }, 1500);
+      }, 500);
     }
   };
 

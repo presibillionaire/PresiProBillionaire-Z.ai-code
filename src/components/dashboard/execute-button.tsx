@@ -16,7 +16,7 @@ export function ExecuteButton() {
   const { executeTrade } = useDerivTrade();
   const currentMarket = marketData[selectedMarket];
   const confidence = currentMarket?.confidence || 0;
-  const canTrade = scanStatus === "ready" && confidence >= 50 && wsConnected && !isTrading;
+  const canTrade = scanStatus === "ready" && confidence >= 30 && wsConnected && !isTrading;
 
   // Track session stats
   const winCount = trades.filter((t) => t.result === "win").length;
@@ -84,10 +84,10 @@ export function ExecuteButton() {
     btnDisabled = true;
     btnLabel = "Scanning Markets";
     btnSub = "Collecting tick data...";
-  } else if (confidence < 50) {
+  } else if (confidence < 30) {
     btnDisabled = true;
     btnLabel = "Low Signal";
-    btnSub = `${Math.round(confidence)}% — need 50%+ confidence`;
+    btnSub = `${Math.round(confidence)}% — need 30%+ confidence`;
   }
 
   return (

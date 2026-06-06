@@ -19,7 +19,7 @@ export const MARKETS: Market[] = [
   { symbol: "R_100", label: "Vol 100", is1s: false },
 ];
 
-export const TICKS_REQUIRED = 20;
+export const TICKS_REQUIRED = 5;
 
 export const TICK_DURATIONS = [
   { label: "1 tick", ticks: 1 },
