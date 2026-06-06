@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Key, Eye, EyeOff, LogIn, ExternalLink, Play, Wifi, WifiOff, Loader2 } from "lucide-react";
+import { Key, Eye, EyeOff, LogIn, ExternalLink, Wifi, WifiOff, Loader2 } from "lucide-react";
 import { SlideUp, AnimatedPopup, FadeIn } from "@/components/shared/animations";
 import { useTradingStore } from "@/stores/trading-store";
 import { motion } from "framer-motion";
@@ -33,10 +33,6 @@ export function AuthSection() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleDemo = () => {
-    authenticate("demo-token", 5397.98, "demo");
   };
 
   return (
@@ -131,21 +127,6 @@ export function AuthSection() {
           </a>
         </div>
       </AnimatedPopup>
-
-      {/* Demo Mode */}
-      <SlideUp delay={0.6}>
-        <div className="w-full max-w-sm mt-4">
-          <motion.button
-            whileHover={{ scale: 1.01 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={handleDemo}
-            className="w-full flex items-center justify-center gap-2.5 py-3 rounded-xl font-medium text-sm bg-white/[0.04] text-gray-400 hover:bg-white/[0.07] hover:text-gray-300 transition-all cursor-pointer"
-          >
-            <Play size={16} className="text-teal-400" />
-            Try Demo Mode
-          </motion.button>
-        </div>
-      </SlideUp>
 
       {/* New User */}
       <FadeIn delay={0.65}>
