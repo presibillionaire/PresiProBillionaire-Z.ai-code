@@ -17,7 +17,7 @@ interface TradingState {
   activeStrategy: Strategy | null;
   strategySelectorOpen: boolean;
 
-  // Trading
+  // Trading — core
   direction: Direction;
   mode: Mode;
   stake: number;
@@ -29,6 +29,17 @@ interface TradingState {
   trendAgreement: boolean;
   takeProfit: number;
   martingaleSteps: number;
+
+  // Trading — auto & advanced settings (from user image)
+  stakePercent: number;        // STAKE SIZE (%) — percentage of balance per trade
+  martMultiplier: number;     // MART × (ON LOSS) — martingale multiplier
+  reinvestPercent: number;    // REINVEST (% OF PROFIT) — compound % of session profit
+  martingaleEnabled: boolean; // MARTINGALE toggle — enable/disable martingale
+  reinvestEnabled: boolean;   // REINVEST PROFITS toggle — enable/disable reinvest
+  autoTradeEnabled: boolean;  // AUTO trade toggle — enable/disable auto trading
+  confidenceThreshold: number; // Min confidence % required for auto-trade
+  consecutiveLosses: number;  // Track consecutive losses for martingale
+  targetProfitReached: boolean; // Flag: has target profit been reached this session?
 
   // Market Data
   marketData: Record<string, MarketData>;
@@ -76,6 +87,17 @@ interface TradingState {
   setTrendAgreement: (val: boolean) => void;
   setTakeProfit: (val: number) => void;
   setMartingaleSteps: (val: number) => void;
+
+  // New advanced settings actions
+  setStakePercent: (val: number) => void;
+  setMartMultiplier: (val: number) => void;
+  setReinvestPercent: (val: number) => void;
+  setMartingaleEnabled: (val: boolean) => void;
+  setReinvestEnabled: (val: boolean) => void;
+  setAutoTradeEnabled: (val: boolean) => void;
+  setConfidenceThreshold: (val: number) => void;
+  setConsecutiveLosses: (val: number) => void;
+  setTargetProfitReached: (val: boolean) => void;
 
   updateMarketData: (symbol: string, data: Partial<MarketData>) => void;
   setScanProgress: (progress: number) => void;
@@ -128,7 +150,7 @@ export const useTradingStore = create<TradingState>((set, get) => ({
   activeStrategy: null,
   strategySelectorOpen: false,
 
-  // Trading
+  // Trading — core
   direction: "EVEN",
   mode: "standard",
   stake: 10,
@@ -140,6 +162,17 @@ export const useTradingStore = create<TradingState>((set, get) => ({
   trendAgreement: true,
   takeProfit: 100,
   martingaleSteps: 0,
+
+  // Trading — auto & advanced settings
+  stakePercent: 75,
+  martMultiplier: 2,
+  reinvestPercent: 50,
+  martingaleEnabled: true,
+  reinvestEnabled: false,
+  autoTradeEnabled: false,
+  confidenceThreshold: 50,
+  consecutiveLosses: 0,
+  targetProfitReached: false,
 
   // Market Data
   marketData: initialMarketData,
@@ -201,6 +234,9 @@ export const useTradingStore = create<TradingState>((set, get) => ({
       lastTickTime: 0,
       activeTickSubscriptions: [],
       _wsRef: null,
+      autoTradeEnabled: false,
+      consecutiveLosses: 0,
+      targetProfitReached: false,
     }),
 
   setActiveStrategy: (strategy) => set({ activeStrategy: strategy, strategySelectorOpen: false }),
@@ -217,6 +253,17 @@ export const useTradingStore = create<TradingState>((set, get) => ({
   setTrendAgreement: (val) => set({ trendAgreement: val }),
   setTakeProfit: (val) => set({ takeProfit: val }),
   setMartingaleSteps: (val) => set({ martingaleSteps: val }),
+
+  // New advanced settings actions
+  setStakePercent: (val) => set({ stakePercent: val }),
+  setMartMultiplier: (val) => set({ martMultiplier: val }),
+  setReinvestPercent: (val) => set({ reinvestPercent: val }),
+  setMartingaleEnabled: (val) => set({ martingaleEnabled: val }),
+  setReinvestEnabled: (val) => set({ reinvestEnabled: val }),
+  setAutoTradeEnabled: (val) => set({ autoTradeEnabled: val }),
+  setConfidenceThreshold: (val) => set({ confidenceThreshold: val }),
+  setConsecutiveLosses: (val) => set({ consecutiveLosses: val }),
+  setTargetProfitReached: (val) => set({ targetProfitReached: val }),
 
   updateMarketData: (symbol, data) =>
     set((s) => ({
