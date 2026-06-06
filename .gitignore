@@ -65,3 +65,22 @@ landing-page.png
 
 # Prisma
 prisma/*.db
+
+# Z.ai sandbox infrastructure (not part of app)
+.zscripts/
+skills/
+mini-services/
+examples/
+upload/
+download/
+landing-page.png
+*.png
+!public/**/*.png
+!src/**/*.png
+Caddyfile
+supervisor.ts
+serve.ts
+serve-static.ts
+serve-static.cjs
+worklog.md
+twinmil-home.json
